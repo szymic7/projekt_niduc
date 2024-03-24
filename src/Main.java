@@ -1,6 +1,7 @@
 public class Main {
 
     public static void main(String[] args) {
+
         RandomNumberGenerator generator = new RandomNumberGenerator();
         int[] tablica = new int[10];
         tablica = generator.generateNumber(100, 10);
@@ -15,5 +16,7 @@ public class Main {
         for(int i = 0; i < tablica2.length; i++) {
             System.out.print(tablica2[i] + ", ");
         }
+
     }
+
 }
