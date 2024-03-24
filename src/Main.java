@@ -18,5 +18,5 @@ public class Main {
         }
 
     }
-
+    //witam z tej strony Mikołaj, porobimy razem projekt?
 }
