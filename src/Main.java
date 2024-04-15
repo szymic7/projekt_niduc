@@ -3,7 +3,7 @@ public class Main {
     public static void main(String[] args) {
 
         RandomNumberND generator = new RandomNumberND();
-        int[] tablica = new int[200];
+        int[] tablica;
         tablica = generator.generateArray(0, 100, 200);
         for(int i = 0; i < tablica.length; i++) {
             System.out.print(tablica[i] + ", ");
