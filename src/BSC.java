@@ -11,7 +11,7 @@ public class BSC {
         int chance = (int)(p*100);  //szansa w %
         char znak;                  //znak kolejno odczytany z podanego tekstu
         for(int i = 0; i < tekst.length(); i++){
-            randomNumber = random.nextInt(100)+1;       //przypisywanie do zmiennej random nowo wylosowane liczby
+            randomNumber = random.nextInt(100);       //przypisywanie do zmiennej random nowo wylosowane liczby
             if(chance>=randomNumber){                         //warunek jeżeli losowa liczba zawiera się w szansie
                 znak = tekst.charAt(i);
                 if(znak == '0'){                              //zamiana znaku jako efekt "dobrego" losu
