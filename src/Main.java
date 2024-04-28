@@ -8,8 +8,7 @@ public class Main {
         System.out.println(ciag);
 
         //aktywuj do sprawdzenia BSC (Kanał binarnie symetryczny) - Nicklas Lipińskas
-
-        //test
+//        test
 //        String[] tab = new String[5];
 //        BSC bsc = new BSC();
 
@@ -33,4 +32,25 @@ public class Main {
     }
     //witam z tej strony Mikołaj, porobimy razem projekt?
     //Hej tutaj Piotrus, jestem za
+
+
+
+
+    /*
+    * Część do testowania gilberta
+    * */
+
+
+
+
+
+
+
+    /*
+    * Koniec testowania gilberta
+    * */
+
+
+
+
 }
