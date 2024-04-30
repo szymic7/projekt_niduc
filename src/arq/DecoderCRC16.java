@@ -7,8 +7,10 @@ public class DecoderCRC16 {
     }
 
     public String calculateCRC16(String input) {
+
+        // Wielomian CRC: x^16+x^12+x^5+1
         String divisior = "10001000000100001";
-        StringBuilder shiftedDivisor = new StringBuilder(divisior);
+
         // Dopisanie 16 zer z prawej strony ciągu bitów - miejsce na sumę kontrolną
         StringBuilder inputBuilder = new StringBuilder(input);
         inputBuilder.append("0000000000000000");
@@ -21,8 +23,9 @@ public class DecoderCRC16 {
         // Cykliczne dzielenie przez wielomian
         for (int i = 0; i < inputBuilder.length(); i++) {
 
-            // If MSB of result is 1, perform XOR operation with divisor
+            // Sprawdzamy czy bit wyniku (ciagu bitow), na wysokosci ktorego jest najstarszy bit wielomianu, jest rowny 1
             if (result.charAt(i) == '1') {
+                // Jesli tak - wykonujemy ciag operacji XOR
                 for (int j = 0; j < divisior.length(); j++) {
                     // operacja XOR na bicie wyniku i odpowiadającym mu bicie wielomianu
                     result.setCharAt(i + j, (result.charAt(i + j) == divisior.charAt(j)) ? '0' : '1');
@@ -40,13 +43,13 @@ public class DecoderCRC16 {
                 notZeroBytes = 0;           // jesli nie - kontunuujemy dzielenie, z przesunietym w prawo wielomianem
             }
 
-            // Shift divisor to the right by 1 - byc moze nie potrzebne, bo przechodzimy na kolejny bit ciagu input
+            // Przeusniecie wielomianu o 1 w prawo - byc moze nie potrzebne, bo przechodzimy na kolejny bit ciagu input
             /*if (i < input.length() - 1) {
                 shiftedDivisor.insert('0', 0);
             }*/
         }
 
-        // Return the last 16 bits of the result as CRC value
+        // Zwracamy najmlodsze 16 bitow - obliczaona sume kontrolna CRC16
         return result.substring(result.length() - 16);
 
     }

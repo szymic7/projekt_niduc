@@ -4,7 +4,7 @@ public class DecoderParityBit {
 
     public DecoderParityBit() {}
 
-    // dekodowanie dla pojedynczego pakietu
+    // Dekodowanie dla pojedynczego pakietu
     public void decode(String bits) {
 
         char receivedParityBit = bits.charAt(bits.length()-1); // odebrany bit parzystosci
@@ -21,7 +21,7 @@ public class DecoderParityBit {
             calculatedParityBit = '0';  // bit parzystosci rowny 0
         }
 
-        // sprawdzenie zgodnosci z odebranym bitem parzystosci
+        // Sprawdzenie zgodnosci z odebranym bitem parzystosci
         if(calculatedParityBit == receivedParityBit) {
             // pakiet zostal prawidlowo przeslany
             System.out.println("Pakiet zostal prawidlowo przeslany.");
@@ -32,14 +32,14 @@ public class DecoderParityBit {
 
     }
 
-    // dekodowanie dla tablicy - ciagu pakietow
+    // Dekodowanie dla tablicy - ciagu pakietow
     public void decodePackets(String[] bitsArray) {
         for(String bits: bitsArray) {
             this.decode(bits);
         }
     }
 
-    // funkcja wysylajaca zadanie ponownej transmisji pakietu
+    // Funkcja wysylajaca zadanie ponownej transmisji pakietu
     public void sendRepeatRequest() {
 
     }

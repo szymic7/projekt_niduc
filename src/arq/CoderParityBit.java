@@ -4,7 +4,7 @@ public class CoderParityBit {
 
     public CoderParityBit() {}
 
-    // kodowanie dla pojedynczego pakietu
+    // Kodowanie dla pojedynczego pakietu
     public String addParityBit(String bits) {
         int ones = 0;
         String codedPacket;
@@ -23,7 +23,7 @@ public class CoderParityBit {
     }
 
 
-    // kodowanie dla tablicy - ciagu pakietow
+    // Kodowanie dla tablicy - ciagu pakietow
     public String[] addParityBits(String[] bitsArray) {
         String[] codedPackets = new String[bitsArray.length];
         for(int i = 0; i < bitsArray.length; i++) {
