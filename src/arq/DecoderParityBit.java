@@ -24,10 +24,10 @@ public class DecoderParityBit {
         // sprawdzenie zgodnosci z odebranym bitem parzystosci
         if(calculatedParityBit == receivedParityBit) {
             // pakiet zostal prawidlowo przeslany
-            System.out.println("Pakiet zostal prawidlowo przeslany.\n");
+            System.out.println("Pakiet zostal prawidlowo przeslany.");
         } else {
             // pakiet zostal przeslany blednie - wysylamy do nadajnika zadanie ponownej transmisji pakietu
-            System.out.println("Pakiet zostal blednie przeslany.\n");
+            System.out.println("Pakiet zostal blednie przeslany.");
         }
 
     }

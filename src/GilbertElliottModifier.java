@@ -17,7 +17,7 @@ public class GilbertElliottModifier {
     }
 
     // Funkcja modyfikująca stringa zgodnie z modelem Gilberta-Elliotta z wykorzystaniem BSC w stanie "złym"
-    private String modifyString(String input, float pGood, float pBad, float pErrorInBad) {
+    public String modifyString(String input, float pGood, float pBad, float pErrorInBad) {
         BSC bsc = new BSC();
         StringBuilder output = new StringBuilder();
         boolean channelGood = true; // Początkowo zakładamy, że kanał jest w stanie "dobrym"
