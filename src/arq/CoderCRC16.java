@@ -43,10 +43,6 @@ public class CoderCRC16 {
                 notZeroBytes = 0;           // jesli nie - kontunuujemy dzielenie, z przesunietym w prawo wielomianem
             }
 
-            // Przeusniecie wielomianu o 1 w prawo - byc moze nie potrzebne, bo przechodzimy na kolejny bit ciagu input
-            /*if (i < input.length() - 1) {
-                shiftedDivisor.insert('0', 0);
-            }*/
         }
 
         // Zwracamy najmlodsze 16 bitow - obliczaona sume kontrolna CRC16

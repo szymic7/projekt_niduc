@@ -1,7 +1,7 @@
 <h1>NIDUC</h1>
 TODO:
 
-- [x] BSC
+- [x] communication_chanels.BSC
 - [x] Gilbert Elliot
 - [ ] bit parzystości
 - [ ] kody Hamminga
