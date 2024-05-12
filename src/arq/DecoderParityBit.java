@@ -5,7 +5,7 @@ public class DecoderParityBit {
     public DecoderParityBit() {}
 
     // Dekodowanie dla pojedynczego pakietu
-    public void decode(String bits) {
+    public boolean decode(String bits) {
 
         char receivedParityBit = bits.charAt(bits.length()-1); // odebrany bit parzystosci
         int ones = 0;
@@ -24,10 +24,12 @@ public class DecoderParityBit {
         // Sprawdzenie zgodnosci z odebranym bitem parzystosci
         if(calculatedParityBit == receivedParityBit) {
             // pakiet zostal prawidlowo przeslany
-            System.out.println("Pakiet zostal prawidlowo przeslany.");
+            return true;
+            //System.out.println("Pakiet zostal prawidlowo przeslany.");
         } else {
             // pakiet zostal przeslany blednie - wysylamy do nadajnika zadanie ponownej transmisji pakietu
-            System.out.println("Pakiet zostal blednie przeslany.");
+            return false;
+            //System.out.println("Pakiet zostal blednie przeslany.");
         }
 
     }

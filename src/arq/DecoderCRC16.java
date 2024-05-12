@@ -6,7 +6,7 @@ public class DecoderCRC16 {
 
     }
 
-    public String calculateCRC16(String input) {
+    public boolean decode(String input) {
 
         // Wielomian CRC: x^16+x^12+x^5+1
         String divisior = "10001000000100001";
@@ -43,7 +43,14 @@ public class DecoderCRC16 {
         }
 
         // Zwracamy najmlodsze 16 bitow - obliczaona sume kontrolna CRC16
-        return result.substring(result.length() - 16);
+        // return result.substring(result.length() - 16);
+
+        String calculatedCRC = result.substring(result.length() - 16);
+        for(char bit: calculatedCRC.toCharArray()) {
+            if(bit == '1') return false; // Jesli CRC nie jest ciagiem zer, to pakiet zostal blednie przeslany
+        }
+
+        return true;
 
     }
 

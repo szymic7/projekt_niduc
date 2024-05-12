@@ -45,7 +45,9 @@ public class RandomNumberND {
         for(int i = 0; i<size; i++){
             pakiet += arrayString[i];
         }
-        return pakiet; //zwrócenie tablicy
+
+        // Uciecie Stringa do size bitow
+        return pakiet.substring(0, size); //zwrócenie tablicy
     }
 
 }

@@ -7,16 +7,51 @@ import arq.DecoderParityBit;
 import communication_chanels.BSC;
 import communication_chanels.GilbertElliottModifier;
 import generating_data.RandomNumberND;
+import receivers.StopAndWaitReceiver;
+import senders.StopAndWaitSender;
 
 public class Main {
 
     public static void main(String[] args) {
 
-        // inicjalizacja tablicy liczb losowych, z konwersja na ciag bitow
+        // Inicjalizacja generatora liczb losowych, odbiornikow i nadajnikow
         RandomNumberND generator = new RandomNumberND();
-        String ciag = generator.generateArray(0, 100, 200);
-        //System.out.println(ciag);
+        StopAndWaitSender stopAndWaitSender = new StopAndWaitSender();
+        StopAndWaitReceiver stopAndWaitReceiver = new StopAndWaitReceiver();
 
+
+        // SYMULACJA 1 - STOP-AND-WAIT ARQ, KANAL BSC
+
+        // SYMULACJA 1a - kodowanie metoda bitu parzystosci
+        String ciag = generator.generateArray(0, 100, 1000);
+        stopAndWaitSender.setPackets(ciag, 20);
+        System.out.println("Symulacja 1a - STOP-AND-WAIT ARQ, kanal BSC, bit parzystosci:");
+        stopAndWaitSender.sendPacketsBSC(stopAndWaitReceiver, 1);
+
+        // SYMULACJA 1b - kodowanie metoda CRC16
+        ciag = generator.generateArray(0, 100, 1000);
+        stopAndWaitSender.setPackets(ciag, 20);
+        System.out.println("Symulacja 1b - STOP-AND-WAIT ARQ, kanal BSC, CRC16:");
+        stopAndWaitSender.sendPacketsBSC(stopAndWaitReceiver, 2);
+
+
+
+        // SYMULACJA 2 - STOP-AND-WAIT ARQ, KANAL GILBERTA-ELLIOTTA
+
+        // SYMULACJA 2a - kodowanie metoda bitu parzystosci
+        ciag = generator.generateArray(0, 100, 1000);
+        stopAndWaitSender.setPackets(ciag, 20);
+        System.out.println("Symulacja 2a - STOP-AND-WAIT ARQ, kanal Giblerta-Elliotta, bit parzystosci:");
+        stopAndWaitSender.sendPacketsGillbertElliot(stopAndWaitReceiver, 1);
+
+        // SYMULACJA 2b - kodowanie metoda CRC16
+        ciag = generator.generateArray(0, 100, 1000);
+        stopAndWaitSender.setPackets(ciag, 20);
+        System.out.println("Symulacja 2b - STOP-AND-WAIT ARQ, kanal Giblerta-Elliotta, CRC16:");
+        stopAndWaitSender.sendPacketsGillbertElliot(stopAndWaitReceiver, 2);
+
+
+        /*
         // inicjalizacja koderow i dekoderow
         CoderCRC16 coderCRC = new CoderCRC16();
         DecoderCRC16 decoderCRC = new DecoderCRC16();
@@ -37,7 +72,7 @@ public class Main {
         String wyslany1 = bsc1.BSCcoding(pakiet1, 0.05f);
         System.out.println("c) " + wyslany1 + " - pakiet po przeslaniu kanalem BSC. Rozmiar: " + wyslany1.length());
 
-        String odebraneCRC1 = decoderCRC.calculateCRC16(wyslany1);
+        //String odebraneCRC1 = decoderCRC.calculateCRC16(wyslany1);
         System.out.println("d) " + odebraneCRC1 + " - CRC wyliczone z odebranego pakietu.");
 
 
@@ -53,7 +88,7 @@ public class Main {
         String wyslany2 = gilbertElliottModifier.modifyString(pakiet2, 0.5f, 0.5f, 0.05f);
         System.out.println("c) " + wyslany2 + " - pakiet po przeslaniu kanalem Gilberta-Elliotta. Rozmiar: " + wyslany2.length());
 
-        String odebraneCRC2 = decoderCRC.calculateCRC16(wyslany2);
+        //String odebraneCRC2 = decoderCRC.calculateCRC16(wyslany2);
         System.out.println("d) " + odebraneCRC2 + " - CRC wyliczone z odebranego pakietu.");
 
 
@@ -84,7 +119,7 @@ public class Main {
         String wyslany4 = gilbertElliottModifier2.modifyString(pakiet4, 0.5f, 0.5f, 0.05f);
         System.out.println("c) " + wyslany4 + " - pakiet po przeslaniu kanalem Gilberta-Elliotta. Rozmiar: " + wyslany4.length());
 
-        decoderPB.decode(wyslany4);
+        decoderPB.decode(wyslany4);*/
 
     }
 }
