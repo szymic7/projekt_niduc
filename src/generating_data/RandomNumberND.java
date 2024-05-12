@@ -1,3 +1,5 @@
+package generating_data;
+
 import java.util.Random;
 import java.util.*;
 

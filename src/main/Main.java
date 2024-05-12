@@ -1,9 +1,12 @@
+package main;
+
 import arq.CoderCRC16;
 import arq.CoderParityBit;
 import arq.DecoderCRC16;
 import arq.DecoderParityBit;
 import communication_chanels.BSC;
 import communication_chanels.GilbertElliottModifier;
+import generating_data.RandomNumberND;
 
 public class Main {
 
