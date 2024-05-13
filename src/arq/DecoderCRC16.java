@@ -42,8 +42,6 @@ public class DecoderCRC16 {
 
         }
 
-        // Zwracamy najmlodsze 16 bitow - obliczaona sume kontrolna CRC16
-        // return result.substring(result.length() - 16);
 
         String calculatedCRC = result.substring(result.length() - 16);
         for(char bit: calculatedCRC.toCharArray()) {

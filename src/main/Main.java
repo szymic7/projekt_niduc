@@ -19,6 +19,7 @@ public class Main {
 
         int sizeOfPacket = 20;
         System.out.println("\nSymulacja przesylania kilku pakietow kanalem komunikacyjnym.");
+        System.out.println("Prawdopodobienstwo wyslania bitu przeciwnego: " + 0.05f);
         System.out.println("Rozmiar pakietu: " + sizeOfPacket + " bitow.\n");
 
 

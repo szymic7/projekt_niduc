@@ -25,11 +25,9 @@ public class DecoderParityBit {
         if(calculatedParityBit == receivedParityBit) {
             // pakiet zostal prawidlowo przeslany
             return true;
-            //System.out.println("Pakiet zostal prawidlowo przeslany.");
         } else {
-            // pakiet zostal przeslany blednie - wysylamy do nadajnika zadanie ponownej transmisji pakietu
+            // pakiet zostal przeslany blednie
             return false;
-            //System.out.println("Pakiet zostal blednie przeslany.");
         }
 
     }
@@ -39,11 +37,6 @@ public class DecoderParityBit {
         for(String bits: bitsArray) {
             this.decode(bits);
         }
-    }
-
-    // Funkcja wysylajaca zadanie ponownej transmisji pakietu
-    public void sendRepeatRequest() {
-
     }
 
 }

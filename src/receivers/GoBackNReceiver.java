@@ -17,7 +17,7 @@ public class GoBackNReceiver {
         int packetToSend = firstPacket; // wartosc zwracana przez funckje, mowiaca, ktorego kolejnego pakietu oczekuje odbiornik
 
         for(int i = firstPacket; i < firstPacket + windowSize && i < packets.length; i++) {
-            // jesli dekoder wykryje blad - nie przetwrza kolejnych pakietow i zwraca indeks blednie przeslanego pakietu
+            // jesli dekoder wykryje blad - nie przetwarza kolejnych pakietow i zwraca indeks blednie przeslanego pakietu
             if(!decoderParityBit.decode(packets[i])) break;
             packetToSend++; // w przypadku poprawnie odebranego pakietu zwiekszamy indeks oczekiwanego pakietu
         }
@@ -36,4 +36,6 @@ public class GoBackNReceiver {
 
         return packetToSend;
     }
+
+
 }

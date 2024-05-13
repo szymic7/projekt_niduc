@@ -57,18 +57,18 @@ public class StopAndWaitSender {
             if(encodingMethod == 1) encodedPacket = coderParityBit.addParityBit(packet);
             else encodedPacket = coderCRC16.addCRC16(packet);
 
+            // Wyslanie pojedynczego pakietu, do skutku - w przypadku bledu ponownie wysylamy ten sam pakiet
             do {
                 // Wyslanie pakietu
                 sentPacket = bsc.BSCcoding(encodedPacket, 0.05f);
                 if(encodingMethod == 1) receivedCorrectly = stopAndWaitReceiver.receivePacketParityBit(sentPacket);
                 else receivedCorrectly = stopAndWaitReceiver.receivePacketCRC16(sentPacket);
-                errors += 1;
+                if(!receivedCorrectly) errors++; // jesli pakiet nie zostal przeslany prawidlowo - odnotowujemy to
 
             } while(!receivedCorrectly);
 
         }
 
-        errors -= packets.length; // zmniejszenie liczby bledow o transmisje wymagane
         System.out.println("Przesylanie pakietow zakonczone.\nLiczba przeslanych pakietow: " + packets.length);
         System.out.println("Liczba bledow transmisji: " + errors + "\n");
 
@@ -88,18 +88,18 @@ public class StopAndWaitSender {
             if(encodingMethod == 1) encodedPacket = coderParityBit.addParityBit(packet);
             else encodedPacket = coderCRC16.addCRC16(packet);
 
+            // Wyslanie pojedynczego pakietu, do skutku - w przypadku bledu ponownie wysylamy ten sam pakiet
             do {
                 // Wyslanie pakietu
                 sentPacket = gillbertElliott.modifyString(encodedPacket, 0.5f, 0.5f, 0.05f);
                 if(encodingMethod == 1) receivedCorrectly = stopAndWaitReceiver.receivePacketParityBit(sentPacket);
                 else receivedCorrectly = stopAndWaitReceiver.receivePacketCRC16(sentPacket);
-                errors += 1;
+                if(!receivedCorrectly) errors++; // jesli pakiet nie zostal przeslany prawidlowo - odnotowujemy to
 
             } while(!receivedCorrectly);
 
         }
 
-        errors -= packets.length; // zmniejszenie liczby bledow o transmisje wymagane
         System.out.println("Przesylanie pakietow zakonczone.\nLiczba przeslanych pakietow: " + packets.length);
         System.out.println("Liczba bledow transmisji: " + errors + "\n");
     }
