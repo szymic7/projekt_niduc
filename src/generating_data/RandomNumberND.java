@@ -4,13 +4,11 @@ import java.util.Random;
 import java.util.*;
 
 public class RandomNumberND {
-    private Random random;
 
-    public RandomNumberND() {
-        this.random = new Random();
-    }
+    public RandomNumberND() {}
 
     public String generateArray(int min, int max, int size) {
+        Random random = new Random();
         int[] array = new int[size]; //inicjalizacja tablicy zastępczej
         String[] arrayString = new String[size]; //inicjalizacja tablicy zastępczej String
         double mean = (min + max) / 2.0; //średnia arytmetyczna

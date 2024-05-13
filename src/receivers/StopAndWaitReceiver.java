@@ -7,7 +7,6 @@ import arq.DecoderParityBit;
 
 public class StopAndWaitReceiver {
 
-    private String[] bits;
     private DecoderParityBit decoderParityBit;
     private DecoderCRC16 decoderCRC16;
 

@@ -60,7 +60,8 @@ public class StopAndWaitSender {
             do {
                 // Wyslanie pakietu
                 sentPacket = bsc.BSCcoding(encodedPacket, 0.05f);
-                receivedCorrectly = stopAndWaitReceiver.receivePacketParityBit(sentPacket);
+                if(encodingMethod == 1) receivedCorrectly = stopAndWaitReceiver.receivePacketParityBit(sentPacket);
+                else receivedCorrectly = stopAndWaitReceiver.receivePacketCRC16(sentPacket);
                 errors += 1;
 
             } while(!receivedCorrectly);
@@ -90,7 +91,8 @@ public class StopAndWaitSender {
             do {
                 // Wyslanie pakietu
                 sentPacket = gillbertElliott.modifyString(encodedPacket, 0.5f, 0.5f, 0.05f);
-                receivedCorrectly = stopAndWaitReceiver.receivePacketParityBit(sentPacket);
+                if(encodingMethod == 1) receivedCorrectly = stopAndWaitReceiver.receivePacketParityBit(sentPacket);
+                else receivedCorrectly = stopAndWaitReceiver.receivePacketCRC16(sentPacket);
                 errors += 1;
 
             } while(!receivedCorrectly);
