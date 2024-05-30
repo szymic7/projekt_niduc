@@ -64,7 +64,7 @@ public class GoBackNSender {
                 }
 
                 // Przeslanie pakietu kanalem BSC - pakiety po przeslaniu w tablicy sentPackets[]
-                sentPackets[i] = bsc.BSCcoding(encodedPackets[i], 0.05f);
+                sentPackets[i] = bsc.BSCcoding(encodedPackets[i], 0.001f);
             }
 
             firstPacketSent = packetToSend; // aby sprawdzic, czy wszystkie n=windowSize pakietow zostalo przeslanych bezblednie
@@ -80,7 +80,7 @@ public class GoBackNSender {
             // to znaczy ze wystapil blad - ciag n=windowSize pakietow nie zostal przeslany poprawnie
             if(packetToSend - windowSize != firstPacketSent && packetToSend < packets.length) {
                 errors++;
-                System.out.println("Blad przesylania. Blednie przeslany pakiet - pakiet " + packetToSend);
+                //System.out.println("Blad przesylania. Blednie przeslany pakiet - pakiet " + packetToSend);
             }
 
         }
@@ -113,7 +113,7 @@ public class GoBackNSender {
                 }
 
                 // Przeslanie pakietu kanalem Gilberta-Elliotta - pakiety po przeslaniu w tablicy sentPackets[]
-                sentPackets[i] = gillbertElliott.modifyString(encodedPackets[i], 0.5f, 0.5f, 0.05f);
+                sentPackets[i] = gillbertElliott.modifyString(encodedPackets[i], 0.5f, 0.5f, 0.001f);
             }
 
             firstPacketSent = packetToSend; // aby sprawdzic, czy wszystkie n=windowSize pakietow zostalo przeslanych bezblednie
@@ -128,7 +128,7 @@ public class GoBackNSender {
             // to znaczy ze wystapil blad - ciag n=windowSize pakietow nie zostal przeslany poprawnie
             if(packetToSend - windowSize != firstPacketSent && packetToSend < packets.length) {
                 errors++;
-                System.out.println("Blad przesylania. Blednie przeslany pakiet - pakiet " + packetToSend);
+                //System.out.println("Blad przesylania. Blednie przeslany pakiet - pakiet " + packetToSend);
             }
 
         }

@@ -60,7 +60,7 @@ public class StopAndWaitSender {
             // Wyslanie pojedynczego pakietu, do skutku - w przypadku bledu ponownie wysylamy ten sam pakiet
             do {
                 // Wyslanie pakietu
-                sentPacket = bsc.BSCcoding(encodedPacket, 0.05f);
+                sentPacket = bsc.BSCcoding(encodedPacket, 0.001f);
                 if(encodingMethod == 1) receivedCorrectly = stopAndWaitReceiver.receivePacketParityBit(sentPacket);
                 else receivedCorrectly = stopAndWaitReceiver.receivePacketCRC16(sentPacket);
                 if(!receivedCorrectly) errors++; // jesli pakiet nie zostal przeslany prawidlowo - odnotowujemy to
@@ -91,7 +91,7 @@ public class StopAndWaitSender {
             // Wyslanie pojedynczego pakietu, do skutku - w przypadku bledu ponownie wysylamy ten sam pakiet
             do {
                 // Wyslanie pakietu
-                sentPacket = gillbertElliott.modifyString(encodedPacket, 0.5f, 0.5f, 0.05f);
+                sentPacket = gillbertElliott.modifyString(encodedPacket, 0.5f, 0.5f, 0.001f);
                 if(encodingMethod == 1) receivedCorrectly = stopAndWaitReceiver.receivePacketParityBit(sentPacket);
                 else receivedCorrectly = stopAndWaitReceiver.receivePacketCRC16(sentPacket);
                 if(!receivedCorrectly) errors++; // jesli pakiet nie zostal przeslany prawidlowo - odnotowujemy to
