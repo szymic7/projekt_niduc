@@ -1,9 +1,7 @@
 package receivers;
 
-import arq.CoderCRC16;
-import arq.CoderParityBit;
-import arq.DecoderCRC16;
-import arq.DecoderParityBit;
+import encoding.DecoderCRC16;
+import encoding.DecoderParityBit;
 
 public class StopAndWaitReceiver {
 

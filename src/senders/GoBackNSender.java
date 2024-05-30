@@ -1,7 +1,7 @@
 package senders;
 
-import arq.CoderCRC16;
-import arq.CoderParityBit;
+import encoding.CoderCRC16;
+import encoding.CoderParityBit;
 import communication_chanels.BSC;
 import communication_chanels.GilbertElliottModifier;
 import receivers.GoBackNReceiver;

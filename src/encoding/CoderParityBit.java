@@ -1,4 +1,4 @@
-package arq;
+package encoding;
 
 public class CoderParityBit {
 

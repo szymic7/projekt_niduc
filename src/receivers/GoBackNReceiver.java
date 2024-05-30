@@ -1,7 +1,7 @@
 package receivers;
 
-import arq.DecoderCRC16;
-import arq.DecoderParityBit;
+import encoding.DecoderCRC16;
+import encoding.DecoderParityBit;
 
 public class GoBackNReceiver {
 

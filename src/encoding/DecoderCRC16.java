@@ -1,27 +1,24 @@
-package arq;
+package encoding;
 
-public class CoderCRC16 {
+public class DecoderCRC16 {
 
-    public CoderCRC16() {
+    public DecoderCRC16() {
 
     }
 
-    public String calculateCRC16(String input) {
+    public boolean decode(String input) {
 
         // Wielomian CRC: x^16+x^12+x^5+1
         String divisior = "10001000000100001";
 
-        // Dopisanie 16 zer z prawej strony ciągu bitów - miejsce na sumę kontrolną
-        StringBuilder inputBuilder = new StringBuilder(input);
-        inputBuilder.append("0000000000000000");
-
+        // Zmienna kontrolna, sledzaca kiedy dzielnie powinno sie zakonczyc
         int notZeroBytes = 0;
 
         // result - reszta z dzielenia
-        StringBuilder result = new StringBuilder(inputBuilder);
+        StringBuilder result = new StringBuilder(input);
 
         // Cykliczne dzielenie przez wielomian
-        for (int i = 0; i < inputBuilder.length(); i++) {
+        for (int i = 0; i < input.length(); i++) {
 
             // Sprawdzamy czy bit wyniku (ciagu bitow), na wysokosci ktorego jest najstarszy bit wielomianu, jest rowny 1
             if (result.charAt(i) == '1') {
@@ -33,7 +30,7 @@ public class CoderCRC16 {
             }
 
             // Sprawdzenie, czy wszystkie bity oprocz 16 najmlodszych zostaly wyzerowane
-            for(int k = 0; k < inputBuilder.length() - 16; k++) {
+            for(int k = 0; k < input.length() - 16; k++) {
                 if(result.charAt(k) == '1') notZeroBytes += 1;
             }
 
@@ -45,16 +42,14 @@ public class CoderCRC16 {
 
         }
 
-        // Zwracamy najmlodsze 16 bitow - obliczaona sume kontrolna CRC16
-        return result.substring(result.length() - 16);
 
-    }
+        String calculatedCRC = result.substring(result.length() - 16);
+        for(char bit: calculatedCRC.toCharArray()) {
+            if(bit == '1') return false; // Jesli CRC nie jest ciagiem zer, to pakiet zostal blednie przeslany
+        }
 
-    public String addCRC16(String bits) {
-        StringBuilder bitsWithCRC = new StringBuilder(bits);
-        String crc16 = this.calculateCRC16(bits);
-        bitsWithCRC.append(crc16);
-        return bitsWithCRC.toString();
+        return true;
+
     }
 
 }
