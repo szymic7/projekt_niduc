@@ -64,7 +64,7 @@ public class GoBackNSender {
                 }
 
                 // Przeslanie pakietu kanalem BSC - pakiety po przeslaniu w tablicy sentPackets[]
-                sentPackets[i] = bsc.BSCcoding(encodedPackets[i], 0.001f);
+                sentPackets[i] = bsc.BSCcoding(encodedPackets[i], 0.01f);
             }
 
             firstPacketSent = packetToSend; // aby sprawdzic, czy wszystkie n=windowSize pakietow zostalo przeslanych bezblednie
@@ -113,7 +113,7 @@ public class GoBackNSender {
                 }
 
                 // Przeslanie pakietu kanalem Gilberta-Elliotta - pakiety po przeslaniu w tablicy sentPackets[]
-                sentPackets[i] = gillbertElliott.modifyString(encodedPackets[i], 0.5f, 0.5f, 0.001f);
+                sentPackets[i] = gillbertElliott.modifyString(encodedPackets[i], 0.5f, 0.5f, 0.01f);
             }
 
             firstPacketSent = packetToSend; // aby sprawdzic, czy wszystkie n=windowSize pakietow zostalo przeslanych bezblednie
