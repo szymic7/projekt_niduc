@@ -6,136 +6,160 @@ import communication_chanels.BSC;
 import communication_chanels.GilbertElliottModifier;
 import receivers.GoBackNReceiver;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+
 public class GoBackNSender {
 
-    String[] packets;
+    /*
+       Zakladamy ze liczba bitow do przeslania jest podzielna przez rozmiar pakietu
+       int numberOfPackets = bits.length() / sizeOfPacket;
+       String[] createdPackets = new String[numberOfPackets];
+       for(int i = 0; i < numberOfPackets; i++) {
+           createdPackets[i] = bits.substring(i * sizeOfPacket, i * sizeOfPacket + sizeOfPacket);
+       }
+    */
+
+    byte[][] packets;
     private CoderParityBit coderParityBit;
     private CoderCRC16 coderCRC16;
     private BSC bsc;
-    private GilbertElliottModifier gillbertElliott;
+    private GilbertElliottModifier gilbertElliott;
 
     public GoBackNSender() {
-
-        /*// Zakladamy ze liczba bitow do przeslania jest podzielna przez rozmiar pakietu
-        int numberOfPackets = bits.length() / sizeOfPacket;
-        String[] createdPackets = new String[numberOfPackets];
-        for(int i = 0; i < numberOfPackets; i++) {
-            createdPackets[i] = bits.substring(i * sizeOfPacket, i * sizeOfPacket + sizeOfPacket);
-        }
-        packets = createdPackets;*/
-
         coderParityBit = new CoderParityBit();
         coderCRC16 = new CoderCRC16();
         bsc = new BSC();
-        gillbertElliott = new GilbertElliottModifier();
+        gilbertElliott = new GilbertElliottModifier();
     }
 
-    public void setPackets(String bits, int sizeOfPacket) {
+    public void setPackets(byte[] bits, int sizeOfPacket) {
 
         // Zakladamy ze liczba bitow do przeslania jest podzielna przez rozmiar pakietu
-        int numberOfPackets = bits.length() / sizeOfPacket;
-        String[] createdPackets = new String[numberOfPackets];
-        for(int i = 0; i < numberOfPackets; i++) {
-            createdPackets[i] = bits.substring(i * sizeOfPacket, i * sizeOfPacket + sizeOfPacket);
+        int numberOfPackets = bits.length / sizeOfPacket;
+        packets = new byte[numberOfPackets][sizeOfPacket];
+        for (int i = 0; i < numberOfPackets; i++) {
+            System.arraycopy(bits, i * sizeOfPacket, packets[i], 0, sizeOfPacket);
         }
-
-        packets = createdPackets;
     }
-
 
     // Wyslij pakiety kanalem BSC
     // encodingMethod: 1 - bit parzystosci, 2 - CRC16 (opcja domyslna)
-    public void sendPacketsBSC(int windowSize, GoBackNReceiver goBackNReceiver, int encodingMethod) {
+    public void sendPacketsBSC(GoBackNReceiver goBackNReceiver, int encodingMethod, int windowSize) {
+        ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
-        int packetToSend = 0, firstPacketSent, errors = 0;
-        String[] encodedPackets = new String[packets.length]; // pakiety po kodowaniu
-        String[] sentPackets = new String[packets.length]; // pakietu po przeslaniu kanalem BSC
+        int packetToSend = 0;
+        int errors = 0;
+        byte[][] encodedPackets = new byte[packets.length][]; // pakiety po kodowaniu
+        byte[][] sentPackets = new byte[packets.length][]; // pakietu po przeslaniu kanalem BSC
 
+        while (packetToSend < packets.length) { // przesylamy dopoki sa pakiety do przeslania
 
-        while(packetToSend < packets.length) { // przesylamy dopoki sa pakiety do przeslania
+            final int finalPacketToSend = packetToSend;
+            List<Future<Integer>> futures = new ArrayList<>();
 
             // Przesylamy n=windowSize pakietow, od indeksu i = packetToSend
-            for(int i = packetToSend; i < packetToSend + windowSize && i < packets.length; i++) {
+            for (int i = packetToSend; i < packetToSend + windowSize && i < packets.length; i++) { // pakiet jeszcze nie zakodowany
+                final int index = i;
+                futures.add(executor.submit(() -> {
+                    // Kodowanie pakietow
+                    if (encodedPackets[index] == null) {
+                        if (encodingMethod == 1) {
+                            encodedPackets[index] = coderParityBit.addParityBit(packets[index]);
+                        } else {
+                            encodedPackets[index] = coderCRC16.addCRC16(packets[index]);
+                        }
+                    }
+                    // Przeslanie pakietu kanalem BSC - pakiety po przeslaniu w tablicy sentPackets[]
+                    sentPackets[index] = bsc.BSCcoding(encodedPackets[index], 0.001f);
+                    if (encodingMethod == 1) {
+                        return goBackNReceiver.receivePacketsParityBit(sentPackets, finalPacketToSend, windowSize);
+                    } else {
+                        return goBackNReceiver.receivePacketsCRC16(sentPackets, finalPacketToSend, windowSize);
+                    }
+                }));
+            }
 
-                // Kodowanie pakietow
-                if(encodedPackets[i] == null) { // pakiet jeszcze nie zakodowany
-                    if (encodingMethod == 1) encodedPackets[i] = coderParityBit.addParityBit(packets[i]);
-                    else encodedPackets[i] = coderCRC16.addCRC16(packets[i]);
+            for (Future<Integer> future : futures) {
+                try {
+                    int result = future.get();
+                    if (result != finalPacketToSend + windowSize) {
+                        errors++;
+                        packetToSend = result;
+                        break;
+                    }
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
                 }
-
-                // Przeslanie pakietu kanalem BSC - pakiety po przeslaniu w tablicy sentPackets[]
-                sentPackets[i] = bsc.BSCcoding(encodedPackets[i], 0.01f);
             }
 
-            firstPacketSent = packetToSend; // aby sprawdzic, czy wszystkie n=windowSize pakietow zostalo przeslanych bezblednie
-
-            // Odebranie n=windowSize pakietow przez odbiornik, kodowanie w zaleznosci od parametru funkcji
-            if(encodingMethod == 1)
-                packetToSend = goBackNReceiver.receivePacketsParityBit(sentPackets, packetToSend, windowSize);
-            else
-                packetToSend = goBackNReceiver.receivePacketsCRC16(sentPackets, packetToSend, windowSize);
-
-
-            // Jesli wartosc packetToSend nie jest wieksza o n=windowSize od wartosci przed przeslaniem
-            // to znaczy ze wystapil blad - ciag n=windowSize pakietow nie zostal przeslany poprawnie
-            if(packetToSend - windowSize != firstPacketSent && packetToSend < packets.length) {
-                errors++;
-                //System.out.println("Blad przesylania. Blednie przeslany pakiet - pakiet " + packetToSend);
-            }
-
+            packetToSend += windowSize;
         }
 
-        System.out.println("Przesylanie pakietow zakonczone.\nLiczba przeslanych pakietow: " + packets.length);
-        System.out.println("Liczba bledow transmisji: " + errors + "\n");
-
+        executor.shutdown();
+        System.out.println("Przesyłanie pakietów zakończone.\nLiczba przesłanych pakietów: " + packets.length);
+        System.out.println("Liczba błędów transmisji: " + errors + "\n");
     }
-
 
 
     // Wyslij pakiety kanalem Gilberta-Elliotta
     // encodingMethod: 1 - bit parzystosci, 2 - CRC16 (opcja domyslna)
     public void sendPacketsGillbertElliot(int windowSize, GoBackNReceiver goBackNReceiver, int encodingMethod) {
+        ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
-        int packetToSend = 0, firstPacketSent, errors = 0;
-        String[] encodedPackets = new String[packets.length]; // pakiety po kodowaniu
-        String[] sentPackets = new String[packets.length]; // pakietu po przeslaniu kanalem BSC
+        int packetToSend = 0;
+        int errors = 0;
+        byte[][] encodedPackets = new byte[packets.length][]; // pakiety po kodowaniu
+        byte[][] sentPackets = new byte[packets.length][]; // pakietu po przeslaniu kanalem BSC
 
-
-        while(packetToSend < packets.length) { // przesylamy dopoki sa pakiety do przeslania
+        while (packetToSend < packets.length) { // przesylamy dopoki sa pakiety do przeslania
+            final int finalPacketToSend = packetToSend;
+            List<Future<Integer>> futures = new ArrayList<>();
 
             // Przesylamy n=windowSize pakietow, od indeksu i = packetToSend
-            for(int i = packetToSend; i < packetToSend + windowSize && i < packets.length; i++) {
+            for (int i = packetToSend; i < packetToSend + windowSize && i < packets.length; i++) {
+                final int index = i;
+                futures.add(executor.submit(() -> {
+                    // Kodowanie pakietow
+                    if (encodedPackets[index] == null) {
+                        if (encodingMethod == 1) {
+                            encodedPackets[index] = coderParityBit.addParityBit(packets[index]);
+                        } else {
+                            encodedPackets[index] = coderCRC16.addCRC16(packets[index]);
+                        }
+                    }
+                    // Przeslanie pakietu kanalem Gilberta-Elliotta - pakiety po przeslaniu w tablicy sentPackets[]
+                    sentPackets[index] = gilbertElliott.modifyStringByElliotGilbert(encodedPackets[index], 0.5f, 0.5f, 0.01f);
+                    if (encodingMethod == 1) {
+                        return goBackNReceiver.receivePacketsParityBit(sentPackets, finalPacketToSend, windowSize);
+                    } else {
+                        return goBackNReceiver.receivePacketsCRC16(sentPackets, finalPacketToSend, windowSize);
+                    }
+                }));
+            }
 
-                // Kodowanie pakietow
-                if(encodedPackets[i] == null) { // pakiet jeszcze nie zakodowany
-                    if (encodingMethod == 1) encodedPackets[i] = coderParityBit.addParityBit(packets[i]);
-                    else encodedPackets[i] = coderCRC16.addCRC16(packets[i]);
+            for (Future<Integer> future : futures) {
+                try {
+                    int result = future.get();
+                    if (result != finalPacketToSend + windowSize) {
+                        errors++;
+                        packetToSend = result;
+                        break;
+                    }
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
                 }
-
-                // Przeslanie pakietu kanalem Gilberta-Elliotta - pakiety po przeslaniu w tablicy sentPackets[]
-                sentPackets[i] = gillbertElliott.modifyString(encodedPackets[i], 0.5f, 0.5f, 0.01f);
             }
 
-            firstPacketSent = packetToSend; // aby sprawdzic, czy wszystkie n=windowSize pakietow zostalo przeslanych bezblednie
-
-            // Odebranie n=windowSize pakietow przez odbiornik, kodowanie w zaleznosci od parametru funkcji
-            if(encodingMethod == 1)
-                packetToSend = goBackNReceiver.receivePacketsParityBit(sentPackets, packetToSend, windowSize);
-            else
-                packetToSend = goBackNReceiver.receivePacketsCRC16(sentPackets, packetToSend, windowSize);
-
-            // Jesli wartosc packetToSend nie jest wieksza o n=windowSize od wartosci przed przeslaniem
-            // to znaczy ze wystapil blad - ciag n=windowSize pakietow nie zostal przeslany poprawnie
-            if(packetToSend - windowSize != firstPacketSent && packetToSend < packets.length) {
-                errors++;
-                //System.out.println("Blad przesylania. Blednie przeslany pakiet - pakiet " + packetToSend);
-            }
-
+            packetToSend += windowSize;
         }
 
-        System.out.println("Przesylanie pakietow zakonczone.\nLiczba przeslanych pakietow: " + packets.length);
-        System.out.println("Liczba bledow transmisji: " + errors + "\n");
+        executor.shutdown();
+        System.out.println("Przesyłanie pakietów zakończone.\nLiczba przesłanych pakietów: " + packets.length);
+        System.out.println("Liczba błędów transmisji: " + errors + "\n");
     }
-
-
 }

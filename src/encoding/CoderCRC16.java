@@ -2,8 +2,12 @@ package encoding;
 
 public class CoderCRC16 {
 
-    public CoderCRC16() {
-
+    public byte[] addCRC16(byte[] input) {
+        String crc = calculateCRC16(new String(input));
+        byte[] result = new byte[input.length + crc.length()];
+        System.arraycopy(input, 0, result, 0, input.length);
+        System.arraycopy(crc.getBytes(), 0, result, input.length, crc.length());
+        return result;
     }
 
     public String calculateCRC16(String input) {
@@ -33,28 +37,18 @@ public class CoderCRC16 {
             }
 
             // Sprawdzenie, czy wszystkie bity oprocz 16 najmlodszych zostaly wyzerowane
-            for(int k = 0; k < inputBuilder.length() - 16; k++) {
-                if(result.charAt(k) == '1') notZeroBytes++;
+            for (int k = 0; k < inputBuilder.length() - 16; k++) {
+                if (result.charAt(k) == '1') notZeroBytes++;
             }
 
-            if(notZeroBytes == 0) {         // jesli tak - nie dzielimy dalej
+            if (notZeroBytes == 0) {        // jesli tak - nie dzielimy dalej
                 break;
             } else {
                 notZeroBytes = 0;           // jesli nie - kontunuujemy dzielenie, z przesunietym w prawo wielomianem
             }
-
         }
 
         // Zwracamy najmlodsze 16 bitow - obliczaona sume kontrolna CRC16
         return result.substring(result.length() - 16);
-
     }
-
-    public String addCRC16(String bits) {
-        StringBuilder bitsWithCRC = new StringBuilder(bits);
-        String crc16 = this.calculateCRC16(bits);
-        bitsWithCRC.append(crc16);
-        return bitsWithCRC.toString();
-    }
-
 }

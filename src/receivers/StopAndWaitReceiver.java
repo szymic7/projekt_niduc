@@ -13,12 +13,11 @@ public class StopAndWaitReceiver {
         decoderCRC16 = new DecoderCRC16();
     }
 
-    public boolean receivePacketParityBit(String packet) {
+    public boolean receivePacketParityBit(byte[] packet) {
         return decoderParityBit.decode(packet);
     }
 
-    public boolean receivePacketCRC16(String packet) {
+    public boolean receivePacketCRC16(byte[] packet) {
         return decoderCRC16.decode(packet);
     }
-
 }

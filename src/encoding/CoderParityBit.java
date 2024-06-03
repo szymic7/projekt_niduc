@@ -2,35 +2,22 @@ package encoding;
 
 public class CoderParityBit {
 
-    public CoderParityBit() {}
-
-    // Kodowanie dla pojedynczego pakietu
-    public String addParityBit(String bits) {
-        int ones = 0;
-        String codedPacket;
-
-        for(int i = 0; i < bits.length(); i++) {
-            if(bits.charAt(i) == '1') ones++;
+    /**
+     * Dodanie bitu parzystości do tablicy bajtów.
+     * @param input Tablica bajtów wejściowych.
+     * @return Tablica bajtów z dodanym bitem parzystości.
+     */
+    public byte[] addParityBit(byte[] input) {
+        int onesCount = 0;
+        for (byte b : input) {
+            // Zliczanie jedynek
+            if (b == '1') onesCount++;
         }
-
-        if(ones % 2 == 1) {             // nieparzysta liczba jedynek
-            codedPacket = bits + "1";   // bit parzystosci rowny 1
-        } else {                        // parzysta liczba jedynek
-            codedPacket = bits + "0";   // bit parzystosci rowny 0
-        }
-
-        return codedPacket;
+        // Obliczenie bitu parzystości
+        byte parityBit = (byte) ((onesCount % 2 == 0) ? '0' : '1');
+        byte[] result = new byte[input.length + 1];
+        System.arraycopy(input, 0, result, 0, input.length);
+        result[input.length] = parityBit;
+        return result;
     }
-
-
-    // Kodowanie dla tablicy - ciagu pakietow
-    public String[] addParityBits(String[] bitsArray) {
-        String[] codedPackets = new String[bitsArray.length];
-        for(int i = 0; i < bitsArray.length; i++) {
-            codedPackets[i] = this.addParityBit(bitsArray[i]);
-        }
-
-        return codedPackets;
-    }
-
 }
