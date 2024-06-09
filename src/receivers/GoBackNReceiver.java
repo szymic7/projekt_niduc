@@ -13,12 +13,12 @@ public class GoBackNReceiver {
         decoderCRC16 = new DecoderCRC16();
     }
 
-    public boolean receivePacketParityBit(byte[] packet) {
-        return decoderParityBit.decode(packet);
+    public int receivePacketParityBit(byte[] packet, int index) {
+        return decoderParityBit.decode(packet) ? (index + 1) : index;
     }
 
-    public boolean receivePacketCRC16(byte[] packet) {
-        return decoderCRC16.decode(packet);
+    public int receivePacketCRC16(byte[] packet, int index) {
+        return decoderCRC16.decode(packet) ? (index + 1) : index;
     }
 
     public int receivePacketsParityBit(byte[][] packets, int firstPacket, int windowSize) {

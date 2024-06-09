@@ -20,27 +20,17 @@ public class StopAndWaitSender {
     private CoderCRC16 coderCRC16;
     private BSC bsc;
     private GilbertElliottModifier gilbertElliott;
+    private int errors;
 
     public StopAndWaitSender() {
-
-        /*
-        // Zakladamy ze liczba bitow do przeslania jest podzielna przez rozmiar pakietu
-         int numberOfPackets = bits.length() / sizeOfPacket;
-         String[] createdPackets = new String[numberOfPackets];
-         for(int i = 0; i < numberOfPackets; i++) {
-             createdPackets[i] = bits.substring(i * sizeOfPacket, i * sizeOfPacket + sizeOfPacket);
-         }
-        */
-
         coderParityBit = new CoderParityBit();
         coderCRC16 = new CoderCRC16();
         bsc = new BSC();
         gilbertElliott = new GilbertElliottModifier();
+        errors = 0;
     }
 
     public void setPackets(byte[] bits, int sizeOfPacket) {
-
-        // Zakladamy ze liczba bitow do przeslania jest podzielna przez rozmiar pakietu
         int numberOfPackets = bits.length / sizeOfPacket;
         packets = new byte[numberOfPackets][sizeOfPacket];
         for (int i = 0; i < numberOfPackets; i++) {
@@ -48,28 +38,19 @@ public class StopAndWaitSender {
         }
     }
 
-    // Wyslij pakiety kanalem BSC
-    // encodingMethod: 1 - bit parzystosci, 2 - CRC16 (opcja domyslna)
     public void sendPacketsBSC(StopAndWaitReceiver stopAndWaitReceiver, int encodingMethod) {
-
         ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         List<Future<Boolean>> futures = new ArrayList<>();
-
-        int errors = 0;
+        errors = 0;  // Reset errors before sending
 
         for (byte[] packet : packets) {
             futures.add(executor.submit(() -> {
-
                 byte[] encodedPacket;
-
-                // Kodowanie pakietu
                 if (encodingMethod == 1) {
                     encodedPacket = coderParityBit.addParityBit(packet);
                 } else {
                     encodedPacket = coderCRC16.addCRC16(packet);
                 }
-
-                // Wyslanie pakietu
                 byte[] sentPacket = bsc.BSCcoding(encodedPacket, 0.001f);
                 if (encodingMethod == 1) {
                     return stopAndWaitReceiver.receivePacketParityBit(sentPacket);
@@ -92,27 +73,20 @@ public class StopAndWaitSender {
         System.out.println("Liczba błędów transmisji: " + errors + "\n");
     }
 
-    // Wyslij pakiety kanalem Gilberta-Elliotta
-    // encodingMethod: 1 - bit parzystosci, 2 - CRC16 (opcja domyslna)
     public void sendPacketsGillbertElliot(StopAndWaitReceiver stopAndWaitReceiver, int encodingMethod) {
         ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         List<Future<Boolean>> futures = new ArrayList<>();
-        int errors = 0;
+        errors = 0;  // Reset errors before sending
 
         for (byte[] packet : packets) {
             futures.add(executor.submit(() -> {
-
                 byte[] encodedPacket;
-
-                // Kodowanie pakietu
                 if (encodingMethod == 1) {
                     encodedPacket = coderParityBit.addParityBit(packet);
                 } else {
                     encodedPacket = coderCRC16.addCRC16(packet);
                 }
-
-                // Wyslanie pakietu
-                byte[] sentPacket = gilbertElliott.modifyStringByElliotGilbert(encodedPacket, 0.5f, 0.5f, 0.01f);
+                byte[] sentPacket = gilbertElliott.modifyStringByElliotGilbert(encodedPacket, 0.5f, 0.5f, 0.001f);
                 if (encodingMethod == 1) {
                     return stopAndWaitReceiver.receivePacketParityBit(sentPacket);
                 } else {
@@ -132,5 +106,9 @@ public class StopAndWaitSender {
         executor.shutdown();
         System.out.println("Przesyłanie pakietów zakończone.\nLiczba przesłanych pakietów: " + packets.length);
         System.out.println("Liczba błędów transmisji: " + errors + "\n");
+    }
+
+    public int getErrors() {
+        return errors;
     }
 }
