@@ -18,7 +18,7 @@ public class Main {
         long start;
         long end;
         long duration;
-        int iterations = 100; // <-------- liczba powtorzen testu
+        int iterations = 1; // <-------- liczba powtorzen testu
 
 
 
@@ -26,7 +26,7 @@ public class Main {
         //512KB ->  4194304
         //1MB   ->  8388608
         //10MB  ->  83886080
-        int sizeOfData = 8388608;
+        int sizeOfData = 4194304;
 
 
 
@@ -46,7 +46,7 @@ public class Main {
         System.out.println("Symulacja 1a - STOP-AND-WAIT ARQ, kanał BSC, bit parzystości:");
         System.out.println("--------------------------------------");
         System.out.println();
-        // SYMULACJA 1 - STOP-AND-WAIT ARQ, KANAL BSC
+        //SYMULACJA 1 - STOP-AND-WAIT ARQ, KANAL BSC
         double totalDuration1a = 0;
         double totalErrors1a = 0;
         for (int i = 0; i < iterations; i++) {
@@ -239,8 +239,6 @@ public class Main {
         System.out.println();
         System.out.println("--------------------------------------");
         System.out.println();
-
-
 
     }
 }
